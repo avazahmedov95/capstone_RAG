@@ -7,11 +7,13 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from backend.ticketing import create_support_ticket, list_support_tickets, close_support_ticket, list_support_tickets_schema, close_support_ticket_schema
-
+from ingestion.build_index import build_faiss
+from ingestion.ingest import extract_pages, chunk_pages
 
 # Configurations
 BASE_DIR = Path(__file__).resolve().parent.parent
-FAISS_INDEX_PATH = BASE_DIR / "vectorstore" / "faiss_index"
+INDEX_DIR = BASE_DIR / "vectorstore" / "faiss_index"
+DATA_DIR = BASE_DIR / "data"
 
 EMBEDDING_MODEL = "text-embedding-3-large"
 LLM_MODEL = "gpt-4o-mini"
@@ -124,9 +126,33 @@ If no function is called, return ONLY valid JSON:
 
 #RAG Logic
 def load_vectorstore():
+    index_path = Path(INDEX_DIR)
     embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
+    if not index_path.exists():
+        print("FAISS index not found. Building index...")
+
+        all_chunks = []
+
+        for pdf in Path(DATA_DIR).glob("*.pdf"):
+            pages = extract_pages(str(pdf))
+            chunks = chunk_pages(pages)
+            all_chunks.extend(chunks)
+
+        if not all_chunks:
+            raise RuntimeError("No chunks extracted from PDFs")
+
+        build_faiss(
+            chunks=all_chunks,
+            embeddings=embeddings,
+            save_path=INDEX_DIR
+        )
+
+        if not index_path.exists():
+            raise RuntimeError("FAISS index build failed")
+
+        print("FAISS index built successfully")
     return FAISS.load_local(
-        FAISS_INDEX_PATH,
+        INDEX_DIR,
         embeddings,
         allow_dangerous_deserialization=True
     )

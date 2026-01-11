@@ -30,20 +30,3 @@ def build_faiss(chunks, embeddings, save_path):
         os.makedirs(save_path)
 
     vectorstore.save_local(save_path)
-
-
-if __name__ == "__main__":
-    all_chunks = []
-    print("DATA_DIR:", DATA_DIR)
-    print("PDF files:", list(DATA_DIR.glob("*.pdf")))
-    for pdf in Path(DATA_DIR).glob("*.pdf"):
-        print(f"📄 Processing {pdf.name}")
-        pages = extract_pages(str(pdf))
-        chunks = chunk_pages(pages)
-        all_chunks.extend(chunks)
-
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-
-    build_faiss(all_chunks, embeddings, INDEX_DIR)
-
-    print("FAISS index created successfully")

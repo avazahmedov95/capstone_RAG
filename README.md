@@ -115,7 +115,6 @@ After run, Streamlit will display a local URL, usually:
 
 ## Screenshots / Demo
 
-![indexing.png](screenshots/indexing.png)
 
 ![run app.png](screenshots/run%20app.png)
 
@@ -128,6 +127,12 @@ After run, Streamlit will display a local URL, usually:
 ![assistant4.png](screenshots/assistant4.png)
 
 ![assistant5.png](screenshots/assistant5.png)
+
+![hf1.png](screenshots/hf1.png)
+
+![hf2.png](screenshots/hf2.png)
+
+![hf3.png](screenshots/hf3.png)
 
 ---
 
