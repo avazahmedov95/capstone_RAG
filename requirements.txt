@@ -1,3 +1,11 @@
-altair
-pandas
+langchain-text-splitters
+langchain-core
 streamlit
+langchain
+langchain-community
+langchain-openai
+faiss-cpu
+pymupdf
+python-dotenv
+requests
+pydantic
